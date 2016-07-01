@@ -23,7 +23,19 @@ int main()
     cout << "Выбор элемента со стека без снятия: " << A.peekElement() << endl;
     A.printStack();
     cout << "----------------------------------------" << endl;
+    cout << "Вывод количества элементов в стеке: " << A.sizeStack() << endl;
+    A.printStack();
+    cout << "----------------------------------------" << endl;
+    cout << "Удаление n(2) элементов в стеке." << endl;
+    deleteNElements(A, 2);
+    A.printStack();
+    cout << "----------------------------------------" << endl;
+    cout << "Удаление всего стека." << endl;
+    A.deleteStack();
+    A.printStack();
+    cout << "----------------------------------------" << endl;
     cout << "" << endl;
+
 
     return 0;
 }

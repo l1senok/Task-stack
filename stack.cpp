@@ -30,11 +30,11 @@ void Stack::pushElement(float x){
 
 //снять элемент со стека
 float Stack::popElement(){
-    float x;
-    x = mLinkTop->number;
-    mLinkTop = mLinkTop->link;
+    ElementStack *temp = mLinkTop;
+    mLinkTop = temp->link;
+    float x = temp->number;
+    free(temp);
     return x;
-
 }
 
 //получение врехнего числа без снятия со стека
@@ -47,32 +47,44 @@ void Stack::printStack(){
     ElementStack *temp = (ElementStack* )malloc(sizeof(ElementStack));
     temp = mLinkTop;
 
-    while(temp != NULL){
+    if (temp == NULL )
+        cout << "Стек пуст";
+    else while(temp != NULL){
         cout << " -> " << temp->number  ;
         temp = temp->link;
     }
     cout << "."<< endl;
     free(temp);
 }
-/*
+
 //удалить весь стек
 void Stack::deleteStack(){
+    ElementStack *temp;
+
+    while(mLinkTop != NULL){
+        temp = mLinkTop;
+        mLinkTop = temp->link;
+        free(temp);
     }
+}
 
 //размер(количество элементов на стеке)
 int Stack::sizeStack(){
-    ElementStack *temp = (ElementStack* )malloc(sizeof(ElementStack));
+    ElementStack *temp = mLinkTop;
     int countElements = 0;
-    temp = mLinkTop;
 
-    if (temp){    free(temp);
-        return 0;}
+    if (temp == NULL)
+        return 0;
     else
-        while(temp){
+        while(temp != NULL){
             countElements++;
-            temp++;
+            temp = temp->link;
             }
-    free(temp);
+
     return countElements;
     }
-*/
+
+//удалить n элементов с верхушки стека
+void deleteNElements(Stack * A, int n){
+    for(int i=0; i<n ; i++, A->popElement());
+}
