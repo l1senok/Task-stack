@@ -1,6 +1,8 @@
 #ifndef STACK_H
 #define STACK_H
 
+using std::ostream;
+
 struct ElementStack
 {
     float number;
@@ -29,9 +31,11 @@ public:
     void deleteStack();          //удалить весь стек
     int sizeStack();             //размер(количество элементов на стеке)
 
-//    float findMaxElement();      //найти максимальный элемент на стеке
-//    float findMinElement();      //найти минамальный элемент на стеке
-//    void reduceElementN();       //уменьшить все числа в стеке на n
+    friend ostream& operator<<(ostream&, Stack const&);
+    Stack& operator=(Stack&);
+
+
+    void reduceElementN(float);       //уменьшить все числа в стеке на n
 };
 
 void deleteNElements(Stack* , int);      //удалить n элементов с верхушки стека
