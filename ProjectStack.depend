@@ -1,13 +1,21 @@
 # depslib dependency file v1.0
-1467466930 source:/home/alice/prackt/Stack/ProjectStack/main.cpp
+1467694397 source:/home/alice/prackt/Stack/ProjectStack/main.cpp
 	<iostream>
 	"stack.h"
 
-1467487690 /home/alice/prackt/Stack/ProjectStack/stack.h
-
-1467487778 source:/home/alice/prackt/Stack/ProjectStack/stack.cpp
+1467696795 /home/alice/prackt/Stack/ProjectStack/stack.h
 	<iostream>
 	<cstdlib>
 	<cstring>
+	<typeinfo>
+	<iomanip>
+	"stack.h"
+
+1467696515 source:/home/alice/prackt/Stack/ProjectStack/stack.cpp
+	<iostream>
+	<cstdlib>
+	<cstring>
+	<typeinfo>
+	<iomanip>
 	"stack.h"
 
