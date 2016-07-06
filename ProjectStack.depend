@@ -19,3 +19,19 @@
 	<iomanip>
 	"stack.h"
 
+1467817670 source:/home/alice/prackt/Stack/Task-stack/stack.cpp
+	<iostream>
+	<cstdlib>
+	<cstring>
+	<typeinfo>
+	<iomanip>
+	"stack.h"
+
+1467820828 /home/alice/prackt/Stack/Task-stack/stack.h
+	<iostream>
+	<cstdlib>
+	<cstring>
+	<typeinfo>
+	<iomanip>
+	"stack.h"
+

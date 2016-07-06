@@ -27,31 +27,35 @@ class Stack
 {
 
 private:
-  //ElementStack mElementStack;
   ElementStack<T> *mLinkTop;
 public:
     Stack();
-    Stack(const T);//??
+    Stack(const T);
+   // Stack(const Stack &);//конструктор копировани
     ~Stack();
 
     void pushElement(const T);     //добавить элемент на стек
     T popElement();          //снять элемент со стека
     T peekElement();         //получение врехнего числа без снятия со стека
+    void invertStack();
 
     void printStack();           //распечатать весь стек
     void deleteStack();          //удалить весь стек
     int sizeStack();             //размер(количество элементов на стеке)
 
-    friend ostream& operator<<(ostream&, Stack<T> const&);
-    friend istream& operator>>(ostream&, Stack<T> const&);
-    //Stack<T> operator+(Stack<T> const &);
-    bool operator==(Stack<T> const &);
+    template <typename U>
+    friend ostream& operator<<(ostream&, Stack<U> &);
 
-    //Stack& operator=(Stack<T>& const );
+    template <typename K>
+    friend istream& operator>>(ostream&, Stack<K> &);
 
+    Stack<T>& operator=(Stack<T>);
+    Stack<T>& operator+=(Stack<T>& right);
 
-    //???оператор приведения
+    template <typename L>
+    friend Stack<L> operator+(Stack<L>& left,Stack<L>& right);
 
+    bool operator==(Stack<T> &);
 
     void reduceElementN(const T);       //уменьшить все числа в стеке на n
 };
@@ -81,6 +85,13 @@ Stack<T>::Stack(const T x){
     mLinkTop = temp;
 }
 
+/*
+template <typename T>
+Stack<T>::Stack(const Stack<T> &){
+
+}*/
+
+
 template <typename T>
 Stack<T>::~Stack()
 {   ElementStack<T> *temp;
@@ -93,7 +104,7 @@ Stack<T>::~Stack()
 }
 
 //------------------Основные функции для работы со стеком-------------
-//delete push pop peek print
+//delete push pop peek print invert
 
 
 //удаление всего стека
@@ -124,12 +135,12 @@ template <typename T>
 T Stack<T>::popElement(){
     ElementStack<T> *temp = mLinkTop;
     mLinkTop = temp->link;
-    float x = temp->number;
+    T x = temp->number;
     free(temp);
     return x;
 }
 
-//получение врехнего числа без снятия со стека
+//получение верхнего числа без снятия со стека
 template <typename T>
 T Stack<T>::peekElement(){
     return mLinkTop->number;
@@ -138,8 +149,7 @@ T Stack<T>::peekElement(){
 //распечатать весь стек
 template <typename T>
 void Stack<T>::printStack(){
-    ElementStack<T> *temp = (ElementStack<T> *)malloc(sizeof(ElementStack<T>));
-    temp = mLinkTop;
+    ElementStack<T> *temp = mLinkTop;
 
     if (temp == NULL )
         cout << "Стек пуст";
@@ -148,75 +158,126 @@ void Stack<T>::printStack(){
         temp = temp->link;
     }
     cout << "."<< endl;
-    free(temp);
+}
+
+template <typename T>
+ElementStack<T> *helpInvert(T x, ElementStack<T>* link){
+        ElementStack<T> *temp2 = (ElementStack<T> *)malloc(sizeof(ElementStack<T>));
+        temp2->number = x;
+        temp2->link = link;
+        return temp2;
+    }
+
+template <typename T>
+void Stack<T>::invertStack(){
+    ElementStack<T> *temp1;//двигаюсь
+    ElementStack<T> *tempTop;//ссылка
+
+    temp1 = mLinkTop;
+    tempTop = NULL;
+    while(temp1 != NULL){
+        tempTop = helpInvert(temp1->number, tempTop);
+        temp1 = temp1->link;
+    }
+    mLinkTop = tempTop;
 }
 
 //------------Перегрузка операторов(=,<<,>>,+,-,==,+=, -=  )----------------------
 
 template <typename T>
-ostream& operator<<(ostream& os, Stack<T> const& st)
+ostream& operator<<(ostream& os, Stack<T> & st)
 {
-    ElementStack<T> *temp = (ElementStack<T> *)malloc(sizeof(ElementStack<T>));
-    temp = st.mLinkTop;
+    ElementStack<T> *temp = st.mLinkTop;
 
     if (temp == NULL )
         os << "Стек пуст";
-    else while(temp != NULL){
-        os << " -> " << temp->number  ;
-        temp = temp->link;
-    }
-    os << "."<< endl;
-    free(temp);
+    else
+        {st.mLinkTop = temp->link;
+        os << " снят: " << temp->number <<endl;}
+
     return os;
 }
-/*
+//перегрузка ">>" (добавляет элемент на стек)
 template <typename T>
-istream& operator<<(istream& is, Stack<T> const& st)
+istream& operator>>(istream& is, Stack<T> & st)
 {
-    ElementStack<T> *temp = (ElementStack<T> *)malloc(sizeof(ElementStack<T>));
-    temp = st.mLinkTop;
-    is >>
-    free(temp);
+    T value;
+
+    is >> value;
+    st.pushElement(value);
+
     return is;
 }
-*/
 
-/*
-//Доработать перегрузку присваивания
+
+//перегрузка оператора "="
 template <typename T>
-Stack<T> & Stack<T>::operator=(Stack& const st){
-    ElementStack<T> *temp1 = (ElementStack<T> *)calloc(st.sizeStack(), sizeof(ElementStack<T>));
-    temp1 = st.mLinkTop;
-    memcpy(&mLinkTop, &temp1,st.sizeStack()*sizeof(ElementStack<T>));
+Stack<T> & Stack<T>::operator=(Stack<T> st){
+    this->deleteStack();
+    ElementStack<T> *temp = st.mLinkTop;
+
+    while (temp != NULL){
+        this->pushElement(temp->number);
+        temp = temp->link;
+
+        }
+    temp = NULL;
+
+    this->invertStack();
     return *this;
     }
-*/
 
-
-//Stack<T> operator+(Stack<T> const &);
 
 template <typename T>
-bool Stack<T>::operator==(Stack<T> const& other)
-    {
-        if (!((this.sizeStack()== other.sizeStack)&&(typeid(this) == typeid(other))))
+Stack<T>& Stack<T>::operator+=(Stack<T>& right){
+    ElementStack<T> * x = mLinkTop;
+    ElementStack<T> * y = right.mLinkTop;
+
+    if (sizeStack() == right.sizeStack())
+        while (x){
+            x->number+=y->number;
+            x = x->link;
+            y = y->link;
+        }
+    return *this;
+    }
+
+template <typename T>
+Stack<T> operator+(Stack<T>& left, Stack<T>& right){
+
+    Stack<T> Sum;
+    for(int i = 0; i< left.sizeStack(); i++)
+        Sum.pushElement(0);
+
+    Sum += right;
+    Sum += left;
+    return Sum;
+}
+
+template <typename T>
+bool Stack<T>::operator==(Stack<T> & other){
+
+        if (this->sizeStack() != other.sizeStack())
         return false;
 
-        ElementStack<T> *temp1 = (ElementStack<T> *)malloc(sizeof(ElementStack<T>));
-        ElementStack<T> *temp2 = (ElementStack<T> *)malloc(sizeof(ElementStack<T>));
-        temp1 = this.mLinkTop;temp2 = other.mLinkTop;
+        ElementStack<T> *temp1;    ElementStack<T> *temp2;
+        temp1 = this->mLinkTop; temp2 = other.mLinkTop;
+
         bool buf = true;
 
-        if ((temp1 == NULL)&&(temp2 == NULL))
+
+        if ((temp1 == NULL ) && (temp2 == NULL))
             return true;
 
-        else while(temp1 != NULL){
-            if (temp1->number != temp2->number){
+        while(temp1 != NULL ){
+            if (temp1->number != temp2->number)
                 return false;
-                break;}
+            temp1 = temp1->link;
+            temp2 = temp2->link;
         }
-        free(temp1);free(temp2);
         return buf;
     }
+
 
 
 
